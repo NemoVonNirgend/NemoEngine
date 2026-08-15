@@ -1,0 +1,36 @@
+name: Build Vivarium banner
+
+on:
+  push:
+    branches:
+      - automation/vivarium-banner
+    paths:
+      - ".staging/vivarium-banner/READY"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reassemble and verify banner
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat .staging/vivarium-banner/part-* | base64 --decode > Vivarium/banner.png
+          echo "b5017f1c6e33910c51b98fe054aebae8aa1e36597796b0a03e1ea771b106780b  Vivarium/banner.png" | sha256sum --check
+      - name: Commit completed banner
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .staging/vivarium-banner
+          rm -f .github/workflows/build-vivarium-banner.yml
+          rmdir .github/workflows 2>/dev/null || true
+          rmdir .github 2>/dev/null || true
+          git config user.name NemoVonNirgend
+          git config user.email 207980572+NemoVonNirgend@users.noreply.github.com
+          git add -A
+          git commit -m "Add Vivarium banner"
+          git push
