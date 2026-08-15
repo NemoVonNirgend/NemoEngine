@@ -1,0 +1,100 @@
+name: Export Vivarium preset JSON
+
+on:
+  push:
+    branches:
+      - automation/vivarium-json
+    paths:
+      - ".github/workflows/export-vivarium-json.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install browser tooling
+        shell: bash
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install playwright@latest >/dev/null 2>&1
+          npx playwright install chromium --with-deps >/dev/null
+      - name: Export the public Plotlight preset
+        shell: bash
+        run: |
+          cat > export-vivarium.mjs <<'JS'
+          import { chromium } from 'playwright';
+          import fs from 'node:fs';
+
+          const pageUrl = 'https://plotlightstudios.com/discovery/presets/@nemovonnirgend/nemo-vivarium-v10-beta';
+          const destination = 'Vivarium/Nemo Vivarium v1.0 Beta.json';
+          fs.mkdirSync('Vivarium', { recursive: true });
+
+          const browser = await chromium.launch({ headless: true });
+          const context = await browser.newContext({ acceptDownloads: true });
+          const page = await context.newPage();
+          await page.goto(pageUrl, { waitUntil: 'domcontentloaded', timeout: 90000 });
+          await page.waitForTimeout(12000);
+
+          const labels = await page.locator('button, a').evaluateAll(nodes =>
+            nodes.map((node, index) => ({ index, text: (node.textContent || '').trim(), tag: node.tagName }))
+              .filter(item => item.text)
+          );
+          console.log('Available controls:', JSON.stringify(labels, null, 2));
+
+          let download = null;
+          const exportControl = page.locator('button, a').filter({ hasText: /^\s*EXPORT PRESET\s*$/i }).first();
+          if (await exportControl.count()) {
+            const pending = page.waitForEvent('download', { timeout: 15000 }).catch(() => null);
+            await exportControl.click({ timeout: 15000 });
+            download = await pending;
+          }
+
+          if (!download) {
+            await page.waitForTimeout(1500);
+            const followups = page.locator('button, a').filter({ hasText: /download|export|json|sillytavern|rolecall/i });
+            const count = await followups.count();
+            for (let i = 0; i < Math.min(count, 12) && !download; i++) {
+              const item = followups.nth(i);
+              const text = (await item.innerText().catch(() => '')).trim();
+              if (/^export preset$/i.test(text)) continue;
+              console.log(`Trying follow-up control: ${text}`);
+              const pending = page.waitForEvent('download', { timeout: 8000 }).catch(() => null);
+              await item.click({ timeout: 10000 }).catch(error => console.log(`Click failed: ${error}`));
+              download = await pending;
+            }
+          }
+
+          if (!download) {
+            console.log('Final visible text:', (await page.locator('body').innerText()).slice(0, 30000));
+            await browser.close();
+            throw new Error('Plotlight did not produce a downloadable preset file');
+          }
+
+          console.log(`Downloaded as: ${download.suggestedFilename()}`);
+          await download.saveAs(destination);
+          await browser.close();
+          JS
+          node export-vivarium.mjs
+      - name: Verify against the uploaded Vivarium preset
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo '2eab5241223dc591bbf74963ebee0cd540f08e63b8b8f17a28ab4a326085f3dd  Vivarium/Nemo Vivarium v1.0 Beta.json' | sha256sum --check
+          test "$(wc -c < 'Vivarium/Nemo Vivarium v1.0 Beta.json')" -eq 39393
+          python3 -m json.tool 'Vivarium/Nemo Vivarium v1.0 Beta.json' >/dev/null
+      - name: Commit only the verified preset
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf node_modules package.json package-lock.json export-vivarium.mjs
+          rm -f .github/workflows/export-vivarium-json.yml
+          rmdir .github/workflows 2>/dev/null || true
+          rmdir .github 2>/dev/null || true
+          git config user.name NemoVonNirgend
+          git config user.email 207980572+NemoVonNirgend@users.noreply.github.com
+          git add -A
+          git commit -m 'Add Vivarium preset'
+          git push
