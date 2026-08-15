@@ -1,0 +1,41 @@
+name: Build Vivarium preset JSON
+
+on:
+  push:
+    branches:
+      - automation/vivarium-json
+    paths:
+      - ".staging/vivarium-json/READY"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reassemble and verify exact preset
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p Vivarium
+          cat .staging/vivarium-json/part-* | base64 --decode > 'Vivarium/Nemo Vivarium v1.0 Beta.json'
+          echo '2eab5241223dc591bbf74963ebee0cd540f08e63b8b8f17a28ab4a326085f3dd  Vivarium/Nemo Vivarium v1.0 Beta.json' | sha256sum --check
+          test "$(wc -c < 'Vivarium/Nemo Vivarium v1.0 Beta.json')" -eq 39393
+          python3 -m json.tool 'Vivarium/Nemo Vivarium v1.0 Beta.json' >/dev/null
+      - name: Commit only the verified preset
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .staging/vivarium-json
+          rm -f \
+            .github/workflows/export-vivarium-json.yml \
+            .github/workflows/build-vivarium-json.yml
+          rmdir .github/workflows 2>/dev/null || true
+          rmdir .github 2>/dev/null || true
+          git config user.name NemoVonNirgend
+          git config user.email 207980572+NemoVonNirgend@users.noreply.github.com
+          git add -A
+          git commit -m 'Add Vivarium preset'
+          git push
