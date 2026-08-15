@@ -1,0 +1,122 @@
+name: Build Vivarium prompt archive
+
+on:
+  push:
+    branches:
+      - automation/vivarium-prompts
+    paths:
+      - ".staging/vivarium-prompts/READY"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract prompts exactly
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          import re
+          import shutil
+          from pathlib import Path
+
+          source = Path('Vivarium/Nemo Vivarium v1.0 Beta.json')
+          destination = Path('Vivarium/Prompts')
+          data = json.loads(source.read_text(encoding='utf-8'))
+          prompts = {prompt['identifier']: prompt for prompt in data['prompts']}
+          original_order = [prompt['identifier'] for prompt in data['prompts']]
+
+          ordered_ids = []
+          order_enabled = {}
+          for group in data.get('prompt_order', []):
+              for entry in group.get('order', []):
+                  identifier = entry['identifier']
+                  if identifier in prompts and identifier not in ordered_ids:
+                      ordered_ids.append(identifier)
+                      order_enabled[identifier] = entry.get('enabled')
+          for identifier in original_order:
+              if identifier not in ordered_ids:
+                  ordered_ids.append(identifier)
+
+          def scalar(value):
+              if value is True:
+                  return 'true'
+              if value is False:
+                  return 'false'
+              if value is None:
+                  return 'null'
+              if isinstance(value, (int, float)):
+                  return str(value)
+              return json.dumps(value, ensure_ascii=False)
+
+          def safe_filename(value):
+              return re.sub(r'[\\/:*?"<>|]', '_', value)
+
+          shutil.rmtree(destination, ignore_errors=True)
+          destination.mkdir(parents=True)
+
+          for index, identifier in enumerate(ordered_ids):
+              prompt = prompts[identifier]
+              lines = [
+                  '---',
+                  f'identifier: {json.dumps(identifier, ensure_ascii=False)}',
+                  f'name: {json.dumps(prompt.get("name", ""), ensure_ascii=False)}',
+                  f'role: {json.dumps(prompt.get("role", "system"), ensure_ascii=False)}',
+                  f'marker: {scalar(prompt.get("marker"))}',
+                  f'system_prompt: {scalar(prompt.get("system_prompt"))}',
+                  f'enabled: {scalar(prompt.get("enabled"))}',
+                  f'injection_position: {scalar(prompt.get("injection_position"))}',
+                  f'injection_depth: {scalar(prompt.get("injection_depth"))}',
+                  f'injection_order: {scalar(prompt.get("injection_order"))}',
+                  f'injection_trigger: {json.dumps(prompt.get("injection_trigger", []), ensure_ascii=False)}',
+                  f'forbid_overrides: {scalar(prompt.get("forbid_overrides"))}',
+                  f'order_in_preset: {index}',
+                  f'order_enabled: {scalar(order_enabled.get(identifier))}',
+                  '---',
+                  '',
+              ]
+              text = '\n'.join(lines) + '\n' + prompt.get('content', '')
+              filename = f'{index:03d} - {safe_filename(prompt.get("name", ""))} [{safe_filename(identifier)}].md'
+              (destination / filename).write_text(text, encoding='utf-8')
+
+          if len(list(destination.glob('*.md'))) != 16:
+              raise SystemExit('Expected exactly 16 extracted prompts')
+          PY
+
+          cat > /tmp/vivarium-prompts.sha256 <<'HASHES'
+          438336a32c077a0f246ce27267f7ea9fd1237291aeba7ced47036b2a7d19ed51  000 - World Info (before) [worldInfoBefore].md
+          76aa1120f1fcd2de62cb5f9ff4f8cd8100918b7ffb23806da6390e9e0844c9c1  001 - 🐦 Nemo Vivarium Core - Prompt Language Pass [finch-core].md
+          d46690349151ea5a5859a360cdb8ff336f33a861808e55d1d8de548401ee91c9  002 - 💾 Story Data - Plain [finch-databank].md
+          594e60fc5bbca38d0246144c6bb0135c4aec7246fd27e03c674a0fe793ecac72  003 - World Info (after) [worldInfoAfter].md
+          f3441727b30c0d08f6e8084a39cdaa633349e1fefead4dd2cdfac8e4bac6d7a5  004 - Example Dialogue [dialogueExamples].md
+          70ea5f4a1b927cff1470731e1cc1c74110216a9d504afe5e13ebc55e56bf3e5c  005 - Chat History [chatHistory].md
+          221c59a373e3cee7bab0afb82455ea0cdefa1a0615751ec43f41fe62ac424c95  006 - Slop [bbbf24ea-a85e-4c94-8514-b5cc9019a3a0].md
+          bcf12c050b3a7a3054c015f90962b05332f3aad0a43d11509b1689b82fb1aa00  007 - ✒️ Turn Gate - Plain [finch-turn-gate].md
+          9746130cbc09b4afa24889c1eb999dcb05a08c2dc69a08d1d760ebae986d7203  008 - Main Prompt [main].md
+          2023fbf039ba901c93d0e243c3f3b3973fc8edb271c46cf8737f240598b105bf  009 - Post-History [jailbreak].md
+          7e64c4dad16c88dc3351470a1558ae1c70d5d72e564f8eae153dd64bfa8e6ffa  010 - NSFW (native) [nsfw].md
+          b8315a4cf01a8334def3f6e5419e2312f983d314428e3d42fed7fb268cf0fe39  011 - Persona [personaDescription].md
+          7a69efdc9af97fb68a9b2c2fa5d658026fa68833f53c1619188921697f75c215  012 - Character Description [charDescription].md
+          8e0c52296f9c436b59630333c0a9affb167e9b9489f81b2cd23415f538e8b100  013 - Character Personality [charPersonality].md
+          8825f30fb1d6e2bbfc6e0a2cafc0fc1c600ef60cd27de615e049f08daf4ee90e  014 - Scenario [scenario].md
+          e67bf6b79a275a26ccadcec72796b8a5b2cb1c771627c343e164e4fef30a611a  015 - Enhance Definitions [enhanceDefinitions].md
+          HASHES
+          (cd 'Vivarium/Prompts' && sha256sum --check /tmp/vivarium-prompts.sha256)
+      - name: Commit only the verified prompt archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .staging/vivarium-prompts
+          rm -f .github/workflows/build-vivarium-prompts.yml
+          rmdir .github/workflows 2>/dev/null || true
+          rmdir .github 2>/dev/null || true
+          git config user.name NemoVonNirgend
+          git config user.email 207980572+NemoVonNirgend@users.noreply.github.com
+          git add -A
+          git commit -m 'Add Vivarium prompt archive'
+          git push
