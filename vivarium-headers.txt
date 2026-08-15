@@ -1,0 +1,12 @@
+HTTP/2 200 
+cache-control: private, no-cache, no-store, max-age=0, must-revalidate
+content-type: text/html; charset=utf-8
+date: Sat, 15 Aug 2026 23:26:24 GMT
+link: </_next/static/media/01e4147cff8141ee-s.p.3huc2loe0ie8a.woff2>; rel=preload; as="font"; crossorigin=""; type="font/woff2", </_next/static/media/115e7a2565b70400-s.p.1vgtwd90zpq_8.woff2>; rel=preload; as="font"; crossorigin=""; type="font/woff2", </_next/static/media/8bd76523131fa0fc-s.p.1pvupmngxrt5z.woff2>; rel=preload; as="font"; crossorigin=""; type="font/woff2", </_next/static/media/a41eab1df8ed80c4-s.p.0i2mshnqgrio_.woff2>; rel=preload; as="font"; crossorigin=""; type="font/woff2", </_next/static/media/cc014fcb166cf364-s.p.2cu9iw-l3ih8o.woff2>; rel=preload; as="font"; crossorigin=""; type="font/woff2", </_next/static/chunks/0dsx1zfnaqwu4.css>; rel=preload; as="style", </_next/static/chunks/3y9n53m_8jddj.css>; rel=preload; as="style"
+server: railway-hikari
+vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding
+x-powered-by: Next.js
+x-railway-request-id: Q_n3I9sSR1ml5K40U79b0g
+x-railway-edge: lax1
+x-hikari-trace: lax1.v9kt
+
