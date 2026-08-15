@@ -1,0 +1,42 @@
+name: Inspect Vivarium Plotlight asset
+
+on:
+  push:
+    branches:
+      - automation/vivarium-banner
+    paths:
+      - ".github/workflows/inspect-vivarium-plotlight.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch public Plotlight page
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL='https://plotlightstudios.com/discovery/presets/@nemovonnirgend/nemo-vivarium-v10-beta'
+          curl --fail --location --silent --show-error --dump-header vivarium-headers.txt --output vivarium-page.html "$URL"
+          {
+            echo '=== HEADERS ==='
+            cat vivarium-headers.txt
+            echo
+            echo '=== IMAGE/META LINES ==='
+            grep -iE 'og:image|twitter:image|image_url|imageUrl|banner|thumbnail|cover|storage|supabase' vivarium-page.html || true
+            echo
+            echo '=== ABSOLUTE URLS ==='
+            grep -Eo 'https?://[^"<> ]+' vivarium-page.html | sort -u || true
+          } > vivarium-asset-report.txt
+      - name: Commit inspection report
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name NemoVonNirgend
+          git config user.email 207980572+NemoVonNirgend@users.noreply.github.com
+          git add vivarium-page.html vivarium-headers.txt vivarium-asset-report.txt
+          git commit -m "Inspect Vivarium Plotlight asset"
+          git push
