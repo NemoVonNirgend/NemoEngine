@@ -1,0 +1,58 @@
+name: Finish Vivarium banner
+
+on:
+  push:
+    branches:
+      - automation/vivarium-banner
+    paths:
+      - ".github/workflows/finish-vivarium-banner.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  finish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download and verify exact Vivarium banner
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p Vivarium
+          curl --fail --location --silent --show-error \
+            'https://zkcuvyokurmpnhkrbwyl.supabase.co/storage/v1/object/public/users/a7226a96-ad61-4e7b-aba4-0bcc148ef1f4/uploads/img/presets/5830379c-1e10-4655-83ec-053dc4d3b3a7/147f40d1119e41709bff15ca1c4cf3c8.png' \
+            --output Vivarium/banner.png
+          echo 'b5017f1c6e33910c51b98fe054aebae8aa1e36597796b0a03e1ea771b106780b  Vivarium/banner.png' | sha256sum --check
+          python3 - <<'PY'
+          import struct
+          from pathlib import Path
+          data = Path('Vivarium/banner.png').read_bytes()
+          if data[:8] != b'\x89PNG\r\n\x1a\n':
+              raise SystemExit('Not a PNG')
+          width, height = struct.unpack('>II', data[16:24])
+          if (width, height) != (1024, 512):
+              raise SystemExit(f'Unexpected dimensions: {width}x{height}')
+          print(f'Verified PNG: {width}x{height}, {len(data)} bytes')
+          PY
+      - name: Remove temporary inspection machinery and commit banner
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .staging/vivarium-banner
+          rm -f \
+            .github/workflows/build-vivarium-banner.yml \
+            .github/workflows/inspect-vivarium-plotlight.yml \
+            .github/workflows/inspect-vivarium-browser.yml \
+            .github/workflows/finish-vivarium-banner.yml \
+            vivarium-page.html \
+            vivarium-headers.txt \
+            vivarium-asset-report.txt \
+            vivarium-browser-report.json
+          rmdir .github/workflows 2>/dev/null || true
+          rmdir .github 2>/dev/null || true
+          git config user.name NemoVonNirgend
+          git config user.email 207980572+NemoVonNirgend@users.noreply.github.com
+          git add -A
+          git commit -m 'Add Vivarium banner'
+          git push
