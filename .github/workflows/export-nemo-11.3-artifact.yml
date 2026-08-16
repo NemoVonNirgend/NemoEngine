@@ -1,0 +1,23 @@
+name: Export Nemo 11.3 reference
+
+on:
+  push:
+    branches:
+      - automation/nemo-11.5.1-finish
+    paths:
+      - ".github/workflows/export-nemo-11.3-artifact.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nemo-11.3-reference
+          path: "Nemo Engine/Archive/Nemo Engine v11.3.json"
+          if-no-files-found: error
+          retention-days: 1
