@@ -1,0 +1,58 @@
+name: Build exact Magpie preset
+
+on:
+  push:
+    branches:
+      - automation/magpie-json
+    paths:
+      - ".staging/magpie-json/READY"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reassemble and verify the attached preset
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(find .staging/magpie-json -maxdepth 1 -type f -name 'part-*' | wc -l)" -eq 14
+          mkdir -p Magpie
+          cat .staging/magpie-json/part-* | base64 --decode > /tmp/magpie.json.xz
+          echo 'e544fa8d5b387762b7ce79494b7bf3a4c6ad9f74e30e23a3457147a83a782e8e  /tmp/magpie.json.xz' | sha256sum --check
+          test "$(wc -c < /tmp/magpie.json.xz)" -eq 59580
+          xz --test /tmp/magpie.json.xz
+          xz --decompress --stdout /tmp/magpie.json.xz > 'Magpie/Magpie v1 Beta-2.1.json'
+          echo 'eb63f6bb8bd845dd4e1020ca9bd8c9f566f6c47022a6175b94dd01e055b8d941  Magpie/Magpie v1 Beta-2.1.json' | sha256sum --check
+          test "$(wc -c < 'Magpie/Magpie v1 Beta-2.1.json')" -eq 313003
+          python3 -m json.tool 'Magpie/Magpie v1 Beta-2.1.json' >/dev/null
+      - name: Remove transfer and inspection machinery
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf \
+            .staging/magpie-json \
+            magpie-export-candidates \
+            node_modules
+          rm -f \
+            package.json \
+            package-lock.json \
+            export-magpie.mjs \
+            magpie-export-report.txt \
+            magpie-export-hashes.txt \
+            .github/workflows/export-magpie-json.yml \
+            .github/workflows/build-magpie-json.yml
+          rmdir .github/workflows 2>/dev/null || true
+          rmdir .github 2>/dev/null || true
+      - name: Commit only the verified Magpie preset
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name NemoVonNirgend
+          git config user.email 207980572+NemoVonNirgend@users.noreply.github.com
+          git add -A
+          git commit -m 'Add Magpie preset'
+          git push
