@@ -1,0 +1,64 @@
+name: Build Nemo Engine 11.5.1
+
+on:
+  push:
+    branches:
+      - automation/nemo-11.5.1-final
+    paths:
+      - '.staging/nemo-11.5.1/READY'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ensure zstd is available
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! command -v zstd >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y zstd
+          fi
+      - name: Reconstruct and verify exact Nemo Engine 11.5.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat \
+            '.staging/nemo-11.5.1/part-000' \
+            '.staging/nemo-11.5.1/part-001' \
+            '.staging/nemo-11.5.1/part-002' \
+            '.staging/nemo-11.5.1/part-003' \
+            '.staging/nemo-11.5.1/part-004' \
+            '.staging/nemo-11.5.1/part-005' \
+            '.staging/nemo-11.5.1/part-006a' \
+            '.staging/nemo-11.5.1/part-006b' \
+            '.staging/nemo-11.5.1/part-007a' \
+            '.staging/nemo-11.5.1/part-007b' \
+            '.staging/nemo-11.5.1/part-008' \
+            | base64 --decode > /tmp/nemo.patch.zst
+
+          zstd -q -d \
+            --patch-from='Nemo Engine/Archive/Nemo Engine v11.3.json' \
+            /tmp/nemo.patch.zst \
+            -o 'Nemo Engine/Nemo Engine 11.5.1 - General RP.json'
+
+          echo 'cd80c997ac23027d8e636d20c496dee0097e35eccfb39b887f287af80c9177af  Nemo Engine/Nemo Engine 11.5.1 - General RP.json' | sha256sum --check
+          test "$(wc -c < 'Nemo Engine/Nemo Engine 11.5.1 - General RP.json')" -eq 1651123
+          python3 -m json.tool 'Nemo Engine/Nemo Engine 11.5.1 - General RP.json' >/dev/null
+      - name: Commit only the verified preset
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf '.staging/nemo-11.5.1'
+          rm -f '.github/workflows/build-nemo-11.5.1.yml'
+          rmdir .github/workflows 2>/dev/null || true
+          rmdir .github 2>/dev/null || true
+          git config user.name NemoVonNirgend
+          git config user.email 207980572+NemoVonNirgend@users.noreply.github.com
+          git add -A
+          git commit -m 'Add Nemo Engine 11.5.1'
+          git push
