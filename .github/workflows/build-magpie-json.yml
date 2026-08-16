@@ -22,7 +22,7 @@ jobs:
           test "$(find .staging/magpie-json -maxdepth 1 -type f -name 'part-*' | wc -l)" -eq 14
           mkdir -p Magpie
           cat .staging/magpie-json/part-* | base64 --decode > /tmp/magpie.json.xz
-          echo 'e544fa8d5b387762b7ce79494b7bf3a4c6ad9f74e30e23a3457147a83a782e8e  /tmp/magpie.json.xz' | sha256sum --check
+          echo '761dcbc4700f0ad689dfdc0a709a05c8a7413011fec55788a3c7088b32de4645  /tmp/magpie.json.xz' | sha256sum --check
           test "$(wc -c < /tmp/magpie.json.xz)" -eq 59580
           xz --test /tmp/magpie.json.xz
           xz --decompress --stdout /tmp/magpie.json.xz > 'Magpie/Magpie v1 Beta-2.1.json'
