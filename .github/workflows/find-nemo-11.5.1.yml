@@ -1,0 +1,109 @@
+name: Find exact Nemo Engine 11.5.1 export
+
+on:
+  push:
+    branches:
+      - automation/nemo-11.5.1-json
+    paths:
+      - ".github/workflows/find-nemo-11.5.1.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  find:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Playwright
+        shell: bash
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install playwright@latest >/dev/null 2>&1
+          npx playwright install chromium --with-deps >/dev/null
+      - name: Find Nemo preset listings and export candidates
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p nemo-export-candidates
+          cat > find-nemo.mjs <<'JS'
+          import { chromium } from 'playwright';
+          import fs from 'node:fs';
+          import path from 'node:path';
+
+          const browser = await chromium.launch({ headless: true });
+          const context = await browser.newContext({ acceptDownloads: true });
+          const report = [];
+          const startUrls = [
+            'https://plotlightstudios.com/portfolio/nemovonnirgend',
+            'https://plotlightstudios.com/discovery?type=presets&q=Nemo%20Engine',
+            'https://plotlightstudios.com/discovery?type=presets&q=11.5.1'
+          ];
+          const candidates = new Set();
+
+          for (const startUrl of startUrls) {
+            const page = await context.newPage();
+            await page.goto(startUrl, { waitUntil: 'domcontentloaded', timeout: 90000 }).catch(error => report.push(`NAV ${startUrl}: ${error}`));
+            await page.waitForTimeout(12000);
+            const links = await page.locator('a').evaluateAll(nodes => nodes.map(a => ({ text: (a.textContent || '').trim(), href: a.href })));
+            report.push(`PAGE ${startUrl}\nTITLE ${await page.title()}\nTEXT\n${(await page.locator('body').innerText()).slice(0,30000)}\nLINKS\n${JSON.stringify(links,null,2)}`);
+            for (const link of links) {
+              if (/\/discovery\/presets\//i.test(link.href) && /nemo|11\.5|general rp|engine/i.test(`${link.text} ${link.href}`)) candidates.add(link.href);
+            }
+            await page.close();
+          }
+
+          report.push(`PRESET CANDIDATES\n${JSON.stringify([...candidates], null, 2)}`);
+          let downloadIndex = 0;
+
+          for (const url of candidates) {
+            const page = await context.newPage();
+            await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 90000 }).catch(error => report.push(`NAV ${url}: ${error}`));
+            await page.waitForTimeout(10000);
+            const text = await page.locator('body').innerText().catch(() => '');
+            report.push(`PRESET PAGE ${url}\nTITLE ${await page.title()}\nTEXT\n${text.slice(0,30000)}`);
+            if (!/11\.5\.1|general rp/i.test(text)) { await page.close(); continue; }
+
+            const exportControl = page.locator('button, a, [role="button"]').filter({ hasText: /^\s*Export Preset\s*$/i }).first();
+            if (await exportControl.count()) {
+              await exportControl.click({ timeout: 15000 }).catch(error => report.push(`EXPORT CLICK ${url}: ${error}`));
+              await page.waitForTimeout(1200);
+            }
+            const controls = await page.locator('button, a, [role="button"]').evaluateAll(nodes => nodes.map(n => ({ text:(n.textContent||'').trim(), href:n.href||null, visible:!!(n.offsetWidth||n.offsetHeight||n.getClientRects().length) })).filter(x=>x.visible&&x.text));
+            report.push(`CONTROLS ${url}\n${JSON.stringify(controls,null,2)}`);
+            const labels = [...new Set(controls.map(x => x.text).filter(t => /download|export|json|silly|tavern|rolecall|source|original/i.test(t) && !/^export preset$/i.test(t)))];
+
+            for (const label of labels) {
+              const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+              const control = page.locator('button, a, [role="button"]').filter({ hasText: new RegExp(`^\\s*${escaped}\\s*$`, 'i') }).first();
+              if (!(await control.count())) continue;
+              const pending = page.waitForEvent('download', { timeout: 12000 }).catch(() => null);
+              await control.click({ timeout: 10000 }).catch(() => {});
+              const download = await pending;
+              if (download) {
+                const clean = download.suggestedFilename().replace(/[^a-zA-Z0-9._ -]+/g, '_');
+                const destination = path.join('nemo-export-candidates', `${String(downloadIndex).padStart(2,'0')}-${clean}`);
+                await download.saveAs(destination);
+                report.push(`DOWNLOADED ${label}: ${destination}`);
+                downloadIndex++;
+              }
+            }
+            await page.close();
+          }
+
+          await browser.close();
+          fs.writeFileSync('nemo-export-report.txt', report.join('\n\n'));
+          JS
+          node find-nemo.mjs
+          find nemo-export-candidates -type f -print0 | sort -z | xargs -0 -r sha256sum > nemo-export-hashes.txt
+          cat nemo-export-hashes.txt
+      - name: Commit inspection results
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf node_modules package.json package-lock.json find-nemo.mjs
+          git config user.name NemoVonNirgend
+          git config user.email 207980572+NemoVonNirgend@users.noreply.github.com
+          git add nemo-export-report.txt nemo-export-hashes.txt nemo-export-candidates
+          git commit -m 'Inspect Nemo Engine 11.5.1 exports'
+          git push
