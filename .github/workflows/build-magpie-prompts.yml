@@ -1,0 +1,116 @@
+name: Build Magpie prompt archive
+
+on:
+  push:
+    branches:
+      - automation/magpie-prompts
+    paths:
+      - ".staging/magpie-prompts/READY"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract and verify all Magpie prompts
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib
+          import json
+          import re
+          import shutil
+          from pathlib import Path
+
+          source = Path('Magpie/Magpie v1 Beta-2.1.json')
+          destination = Path('Magpie/Prompts')
+          data = json.loads(source.read_text(encoding='utf-8'))
+          prompts = {prompt['identifier']: prompt for prompt in data['prompts']}
+          original_order = [prompt['identifier'] for prompt in data['prompts']]
+
+          ordered_ids = []
+          order_enabled = {}
+          for group in data.get('prompt_order', []):
+              for entry in group.get('order', []):
+                  identifier = entry['identifier']
+                  if identifier in prompts and identifier not in ordered_ids:
+                      ordered_ids.append(identifier)
+                      order_enabled[identifier] = entry.get('enabled')
+          for identifier in original_order:
+              if identifier not in ordered_ids:
+                  ordered_ids.append(identifier)
+
+          def scalar(value):
+              if value is True:
+                  return 'true'
+              if value is False:
+                  return 'false'
+              if value is None:
+                  return 'null'
+              if isinstance(value, (int, float)):
+                  return str(value)
+              return json.dumps(value, ensure_ascii=False)
+
+          def safe_filename(value):
+              return re.sub(r'[\\/:*?"<>|]', '_', value)
+
+          shutil.rmtree(destination, ignore_errors=True)
+          destination.mkdir(parents=True)
+
+          for index, identifier in enumerate(ordered_ids):
+              prompt = prompts[identifier]
+              lines = [
+                  '---',
+                  f'identifier: {json.dumps(identifier, ensure_ascii=False)}',
+                  f'name: {json.dumps(prompt.get("name", ""), ensure_ascii=False)}',
+                  f'role: {json.dumps(prompt.get("role", "system"), ensure_ascii=False)}',
+                  f'marker: {scalar(prompt.get("marker"))}',
+                  f'system_prompt: {scalar(prompt.get("system_prompt"))}',
+                  f'enabled: {scalar(prompt.get("enabled"))}',
+                  f'injection_position: {scalar(prompt.get("injection_position"))}',
+                  f'injection_depth: {scalar(prompt.get("injection_depth"))}',
+                  f'injection_order: {scalar(prompt.get("injection_order"))}',
+                  f'injection_trigger: {json.dumps(prompt.get("injection_trigger", []), ensure_ascii=False)}',
+                  f'forbid_overrides: {scalar(prompt.get("forbid_overrides"))}',
+                  f'order_in_preset: {index}',
+                  f'order_enabled: {scalar(order_enabled.get(identifier))}',
+                  '---',
+                  '',
+              ]
+              text = '\n'.join(lines) + '\n' + prompt.get('content', '')
+              filename = f'{index:03d} - {safe_filename(prompt.get("name", ""))} [{safe_filename(identifier)}].md'
+              (destination / filename).write_text(text, encoding='utf-8')
+
+          files = sorted(destination.glob('*.md'), key=lambda path: path.name)
+          if len(files) != 79:
+              raise SystemExit(f'Expected 79 prompts, found {len(files)}')
+
+          digest = hashlib.sha256()
+          for file in files:
+              digest.update(file.name.encode('utf-8'))
+              digest.update(b'\0')
+              digest.update(file.read_bytes())
+              digest.update(b'\0')
+          actual = digest.hexdigest()
+          expected = 'd9fe4079ae6a9514e27c78a811f7e4a2b3d102393e128af59e68f7f7f676d434'
+          if actual != expected:
+              raise SystemExit(f'Prompt archive checksum mismatch: {actual}')
+          print(f'Verified {len(files)} Magpie prompts: {actual}')
+          PY
+      - name: Commit only the verified prompt archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .staging/magpie-prompts
+          rm -f .github/workflows/build-magpie-prompts.yml
+          rmdir .github/workflows 2>/dev/null || true
+          rmdir .github 2>/dev/null || true
+          git config user.name NemoVonNirgend
+          git config user.email 207980572+NemoVonNirgend@users.noreply.github.com
+          git add -A
+          git commit -m 'Add Magpie prompt archive'
+          git push
