@@ -47,7 +47,7 @@ Nemo Engine is **model-agnostic prompt infrastructure**, not a model and not a f
 | --- | --- |
 | Importable preset | `Nemo Engine 11.5.1 - General RP.json` |
 | Preset name | `Nemo Engine v11.5.1` |
-| File size | 1,651,123 bytes |
+| File size | 1,644,716 bytes |
 | Prompt entries | 451 |
 | Prompt-order profiles | 2 |
 | Embedded regex scripts | 91 |
@@ -697,9 +697,9 @@ Use these values to verify the official v11.5.1 General RP JSON:
 
 ```text
 File: Nemo Engine 11.5.1 - General RP.json
-Size: 1,651,123 bytes
-SHA-256: cd80c997cef21bc393d2f5462474b30e80ea765216c3f7fb5841c3a682aa9429
-Git blob SHA: e8b4e950e5566a9ad1d2043b7b4d4a5b3055652c
+Size: 1,644,716 bytes
+SHA-256: 461e74987d144e8c80f5621169cf0f7f5d3e1db2eeffa068a27e74fc138cd6a1
+Git blob SHA: 3d7e0470d29f69fbe8f1827f82d66fc91770b7d2
 ```
 
 # Credits
