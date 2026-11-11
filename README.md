@@ -4,7 +4,7 @@
 
 ### A modular preset ecosystem for AI roleplay, collaborative fiction, and living worlds.
 
-<a href="./Nemo%20Engine/README.md"><img alt="Nemo Engine v12.3 Downloads" src="https://img.shields.io/badge/Downloads-Nemo%20Engine%20v12.3-7c3aed?style=for-the-badge"></a>
+<a href="./Nemo%20Engine/README.md"><img alt="Nemo Engine v12.5.3 Downloads" src="https://img.shields.io/badge/Downloads-Nemo%20Engine%20v12.5.3-7c3aed?style=for-the-badge"></a>
 <a href="https://github.com/NemoVonNirgend/NemoPresetExt"><img alt="NemoPresetExt" src="https://img.shields.io/badge/Configure-NemoPresetExt-2563eb?style=for-the-badge"></a>
 <a href="https://plotlightstudios.com/"><img alt="Plotlight" src="https://img.shields.io/badge/Discover-Plotlight-d97706?style=for-the-badge"></a>
 <a href="https://rolecallstudios.com/"><img alt="RoleCall" src="https://img.shields.io/badge/Play-RoleCall-e90046?style=for-the-badge"></a>
@@ -28,7 +28,7 @@ The projects share a few principles:
 
 The JSON files are ready-to-import presets. Project folders also contain documentation, archives, and readable prompt material where available.
 
-> **New here?** Download the current **[Nemo Engine v12.3 preset](./Nemo%20Engine/README.md)** and choose Standard or Message Dock. **[Older presets](./Nemo%20Engine/Archive/)** remain available.
+> **New here?** Download the latest **[Nemo Engine v12.5.3 preset](https://raw.githubusercontent.com/NemoVonNirgend/NemoEngine/main/Nemo%20Engine/Nemo_Engine_v12.5.3.json)**. **[Installation and previous versions](./Nemo%20Engine/README.md)** · **[Older presets](./Nemo%20Engine/Archive/)**.
 
 ---
 
@@ -36,7 +36,7 @@ The JSON files are ready-to-import presets. Project folders also contain documen
 
 | Project | Best for | Character |
 | --- | --- | --- |
-| **[Nemo Engine v12.3](./Nemo%20Engine/README.md)** | General roleplay, collaborative fiction, RPG scenes, long-running stories, and users who want deep customization | The flagship. A curated modular authorial engine with selectable craft cores, Vex narrator personalities, planning modes, world logic, difficulty, consequence systems, utilities, trackers, and optional content layers. **[Configuration and edition guide](./Nemo%20Engine/README.md)** · **[Older downloads](./Nemo%20Engine/Archive/)** |
+| **[Nemo Engine v12.5.3](./Nemo%20Engine/README.md)** | General roleplay, collaborative fiction, RPG scenes, long-running stories, and users who want deep customization | The flagship. A curated modular authorial engine with selectable craft cores, Vex narrator personalities, planning modes, world logic, difficulty, consequence systems, utilities, trackers, and optional content layers. **[Configuration and download guide](./Nemo%20Engine/README.md)** · **[Older downloads](./Nemo%20Engine/Archive/)** |
 | **[Magpie v1 Beta-2.1](./Magpie/README.md)** | Ensemble casts, persistent relationships, recurring locations, off-screen motion, and consequences that echo forward | The ensemble engine. Built around **every voice, every consequence**, with dossiers, continuity tools, ledgers, multiple character lenses, and several approaches to failure and death. **[Download](./Magpie/Magpie%20v1%20Beta-2.1.json)** · **[Plotlight](https://plotlightstudios.com/discovery/presets/@nemovonnirgend/magpie-v1-beta-21)** |
 | **[Vivarium v1.0 Beta](./Vivarium/README.md)** | Slice of life, intimate character stories, lower-state adventures, and smaller casts | The compact core. User agency, autonomous characters, a world in motion, plain language, and no visible tracker bureaucracy. **[Download](./Vivarium/Nemo%20Vivarium%20v1.0%20Beta.json)** · **[Plotlight](https://plotlightstudios.com/discovery/presets/@nemovonnirgend/nemo-vivarium-v10-beta)** |
 | **[NemoNet 2.0](./NemoNet/README.md)** | Experimentation, model stress-testing, randomized configurations, unusual systems, and maximal tuning | The laboratory. A broad Engine-based workbench with hundreds of modular options, experimental planning steps, style libraries, trackers, realism systems, RPG tools, and alternate interfaces. **[Download](./NemoNet/Nemo%20Net%202.0.json)** |
@@ -54,7 +54,7 @@ The JSON files are ready-to-import presets. Project folders also contain documen
 
 ## Quick Start
 
-1. Pick a preset from the table above and download its `.json` file. Nemo Engine v12.3 downloads are linked from its landing page.
+1. Pick a preset from the table above and download its `.json` file. The latest Nemo Engine v12.5.3 download is linked from its landing page.
 2. Import it as a Chat Completion preset in **SillyTavern** or a compatible workflow.
 3. Begin with the preset's shipped configuration. Large modular stacks are easiest to understand one change at a time.
 4. Add a character card, persona, scenario, and lorebook suited to the story.
@@ -139,7 +139,7 @@ The long-term goal is one connected creative loop: build the material, publish i
 ## Repository map
 
 ```text
-Nemo Engine/     v12.3 presets, docs/, assets, historical presets in Archive/, and prompt history
+Nemo Engine/     Latest v12.5.3 preset, previous v12.3 editions, docs/, assets, Archive/, and prompt history
 Magpie/          Ensemble-first preset, banner, README, current prompts, and archives
 Vivarium/        Compact living-world preset, banner, README, current prompts, and archives
 NemoNet/         Experimental modular workbench, README, scripts, current prompts, and archives
@@ -176,6 +176,6 @@ Nemo Engine is created and maintained by **[NemoVonNirgend](https://github.com/N
 
 ### Build the cast. Shape the world. Let the story answer back.
 
-**[Nemo Engine v12.3](./Nemo%20Engine/README.md)** · **[Older downloads](./Nemo%20Engine/Archive/)** · **[Configure it](https://github.com/NemoVonNirgend/NemoPresetExt)** · **[Share on Plotlight](https://plotlightstudios.com/)** · **[Play on RoleCall](https://rolecallstudios.com/)**
+**[Nemo Engine v12.5.3](./Nemo%20Engine/README.md)** · **[Older downloads](./Nemo%20Engine/Archive/)** · **[Configure it](https://github.com/NemoVonNirgend/NemoPresetExt)** · **[Share on Plotlight](https://plotlightstudios.com/)** · **[Play on RoleCall](https://rolecallstudios.com/)**
 
 </div>
