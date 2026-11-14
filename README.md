@@ -40,7 +40,7 @@ The JSON files are ready-to-import presets. Project folders also contain documen
 | **[Magpie v1 Beta-2.1](./Magpie/README.md)** | Ensemble casts, persistent relationships, recurring locations, off-screen motion, and consequences that echo forward | The ensemble engine. Built around **every voice, every consequence**, with dossiers, continuity tools, ledgers, multiple character lenses, and several approaches to failure and death. **[Download](./Magpie/Magpie%20v1%20Beta-2.1.json)** · **[Plotlight](https://plotlightstudios.com/discovery/presets/@nemovonnirgend/magpie-v1-beta-21)** |
 | **[Vivarium v1.0 Beta](./Vivarium/README.md)** | Slice of life, intimate character stories, lower-state adventures, and smaller casts | The compact core. User agency, autonomous characters, a world in motion, plain language, and no visible tracker bureaucracy. **[Download](./Vivarium/Nemo%20Vivarium%20v1.0%20Beta.json)** · **[Plotlight](https://plotlightstudios.com/discovery/presets/@nemovonnirgend/nemo-vivarium-v10-beta)** |
 | **[NemoNet 2.0](./NemoNet/README.md)** | Experimentation, model stress-testing, randomized configurations, unusual systems, and maximal tuning | The laboratory. A broad Engine-based workbench with hundreds of modular options, experimental planning steps, style libraries, trackers, realism systems, RPG tools, and alternate interfaces. **[Download](./NemoNet/Nemo%20Net%202.0.json)** |
-| **[Atelier 2.1](./Atelier/)** | People who would rather choose creative preferences than hunt through a giant prompt catalog | The guided studio. Configure stakes, romance, violence, humor, pacing, POV, response length, sensory density, world logic, agency, and presentation through a more approachable preference-driven surface. **[Download](./Atelier/Atelier%202.1.json)** |
+| **[Atelier v3.3 — Revision 9](./Atelier/README.md)** | People who would rather choose creative preferences than hunt through a giant prompt catalog | The guided studio. Configure stakes, romance, violence, humor, pacing, POV, response length, sensory density, world logic, agency, and presentation through a more approachable preference-driven surface. **[Download](./Atelier/Atelier_v3.3_updated-v9.json)** |
 
 ### A quick recommendation
 
@@ -143,7 +143,7 @@ Nemo Engine/     Latest v12.5.3 preset, previous v12.3 editions, docs/, assets, 
 Magpie/          Ensemble-first preset, banner, README, current prompts, and archives
 Vivarium/        Compact living-world preset, banner, README, current prompts, and archives
 NemoNet/         Experimental modular workbench, README, scripts, current prompts, and archives
-Atelier/         Guided preference preset, current prompts, and archives
+Atelier/         Latest v3.3 revision 9 preset, download guide, earlier prompt extracts, and archives
 Templates/       Standalone experiments, alternate prompts, and reusable pieces
 ```
 
@@ -154,6 +154,7 @@ Useful doors:
 - **[Magpie documentation](./Magpie/README.md)**
 - **[Vivarium documentation](./Vivarium/README.md)**
 - **[NemoNet documentation](./NemoNet/README.md)**
+- **[Atelier downloads](./Atelier/README.md)**
 - **[NemoPresetExt](https://github.com/NemoVonNirgend/NemoPresetExt)**
 - **[RoleCall](https://rolecallstudios.com/)**
 - **[Plotlight](https://plotlightstudios.com/)**
