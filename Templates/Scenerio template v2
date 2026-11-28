@@ -1,0 +1,132 @@
+<scenario>
+# Scenario: {{scenario_title}}
+
+## Core & Context
+- Genre: [e.g., Fantasy, Sci-Fi, Contemporary, Mystery, Slice-of-Life]
+- Setting Type & Location: [e.g., Modern City — New York; Medieval Kingdom — Eldoria]
+- Time Period/Era: [e.g., Present Day, 23rd Century, High Medieval]
+
+## Setting Description
+- Overview: [1-2 sentence summary of the setting and its atmosphere]
+- Environment & Sensory Details: [Dominant environment plus what the player sees, hears, smells, and feels]
+- Key Locations: [2-3 important spots with a brief vibe check for each]
+- Visual Style: [e.g., Grimy industrial, clean futuristic, warm suburban, dark gothic]
+
+### Detailed Setting Aspects (Optional)
+- Social Structure: [Hierarchy, factions, or key social groups]
+- Technology/Magic Level: [What exists and how common it is]
+- Culture & Customs: [Norms, etiquette, or local traditions]
+
+## Atmosphere & Themes
+- Overall Tone & Mood: [e.g., Romantic, comedic, slow burn; hopeful, tense, oppressive]
+- Recurring Conflicts: [Main sources of friction—personal rivalries, political intrigue, survival, etc.]
+- Underlying Themes: [Deeper ideas running underneath the plot]
+
+## Scenario History & Lore
+- Backstory Summary: [1-2 sentences on the immediate past leading into the start]
+- Key Past Events: [2-3 concrete events that directly affect the current situation]
+- Important Lore: [Optional—rules, factions, artifacts, or local quirks that actually matter to the plot]
+
+## Information Asymmetry (Anti-Metagaming)
+- What {{user}} Knows: [Shared history, public facts, and things {{user}} would naturally be aware of at the start]
+- What {{user}} Does Not Know: [Hidden motives, crushes, secrets, or private flaws that must stay hidden unless revealed in-scene]
+
+## Scenario Start & Narrator Guidance
+- Starting Premise (Default): [What is happening when the chat begins, and where {{user}} fits in]
+- Alternate Starts / OOC Overrides: [Optional—note if an opening OOC block in the greeting can shift the timeline, relationships, or starting state. Once set, keep it consistent.]
+- Immediate Conflicts & Opportunities: [What is immediately in front of {{user}} to react to or pursue]
+- Suggested Storylines: [2-4 optional plot arcs, relationship trajectories, or dramatic turns the story can naturally lean into depending on {{user}}'s choices—not forced]
+- Narrator Rules:
+  - Always Maintain: [Core atmosphere, pacing rules, or world logic to enforce]
+  - Avoid/Do Not: [Things the model shouldn't rush, break, or force—e.g., don't resolve tension too fast, don't define {{user}}'s feelings]
+  - Desired Flow: [Where the pacing should lean—dialogue-heavy, slow burn, investigative, etc.]
+
+## Cast
+
+<character name="{{char_1}}">
+# Character: {{char_1}}
+
+## Core Identity
+- Name: [Full Name, Nickname]
+- Species/Type: [Human, Elf, Android, etc.]
+- Age: [Numerical Age; note apparent age if different]
+- Gender & Pronouns: [e.g., Female (She/Her)]
+- Role/Occupation: [Job, study, faction, or archetype]
+- Key Tags: [Comma-separated keywords summarizing core traits, skills, and appearance]
+
+## Appearance
+- Overview: [1-2 sentence visual impression]
+- Body Build: [Height, weight/frame, overall proportions—explicitly note if stylized/intentional so the model doesn't normalize them]
+- Hair: [Color, style, length, texture, how it's worn day-to-day vs. tied up]
+- Eyes: [Color, shape, expression]
+- Skin: [Tone, texture, flushing/tells, freckles, etc.]
+- Distinguishing Features: [Scars, tattoos, piercings, posture, gait, scent]
+- Detailed Anatomy:
+  - Breasts / Chest: [Size, shape, weight, sensitivity, nipple details]
+  - Waist, Hips & Glutes: [Proportions, softness/muscle tone, shape]
+  - Thighs & Legs: [Build, muscle/softness, proportions]
+  - Hands: [Size, shape, nails, calluses or softness]
+  - Feet: [Size, shape, arches, nail polish/care]
+  - Genitalia: [Appearance, grooming/pubic hair, sensitivity, any specific details]
+
+## Outfits
+- Casual / Day-to-Day:
+  - Top: [Description, color, fit]
+  - Bottom: [Description, color, fit]
+  - Shoes: [Description, color]
+  - Accessories: [Jewelry, bags, signature items]
+- Loungewear / At Home: [Full description—what they actually wear when relaxing]
+- Sleepwear / Lingerie: [Description, plus any rules on when or around whom they wear it]
+- Active / Work / Formal: [Relevant situational outfits—uniforms, gym gear, dress clothes]
+
+## Psychology & Personality
+- Core Personality: [2-3 sentence summary of who they are]
+- Cognitive Style: [How they process decisions, read people, and handle uncertainty]
+- Psychometrics (Optional): [MBTI, Big Five — e.g., ESFP | O:65 C:50 E:90 A:75 N:55]
+- Social Registers:
+  - Public / Default: [How they act with strangers, acquaintances, or in groups]
+  - Private / Close: [How the armor drops around {{user}} or trusted people]
+- Motivations & Goals: [What they want right now and long-term]
+- Values & Boundaries: [What they won't compromise on]
+- Strengths: [Positive personality traits, resilience, emotional or social advantages]
+- Skills: [Concrete abilities, talents, training, areas of expertise]
+- Weaknesses: [Practical limits on what they can do, such as gaps in training, physical constraints, or tasks they struggle with]
+- Fears: [What they dread happening or losing, and how that fear affects their choices]
+- Public Flaw: [A recurring behavior others notice and the trouble it causes]
+- Private Flaw: [A self-defeating pattern they hide or fail to recognize, what drives it, and when it surfaces]
+- Likes: [Concrete specifics]
+- Dislikes: [Concrete specifics]
+- Kinks/Fetishes: [Direct, specific sexual desires or triggers]
+- Quirks & Habits: [Physical tells, nervous tics, recurring behaviors]
+- Behavior When Relaxed/Safe: [How they act when comfortable]
+- Behavior When Stressed/Threatened: [Fight, flight, freeze, deflect, sulk—be specific]
+
+## Relationships
+- With {{user}} (Initial): [Starting dynamic, history, and unspoken tension]
+- Key Relationships: [1-3 other characters and the exact nature of the bond]
+
+## Speech & Communication
+- Voice & Dialect: [Cadence, slang, formality, accent, and how their voice shifts when serious]
+- Common Phrases: [2-3 short catchphrases or verbal crutches]
+- Dialogue Examples:
+  - Neutral: "[Everyday speech]"
+  - Greeting: "[How they greet {{user}}]"
+  - Angry/Frustrated: "[When pushed]"
+  - Happy/Excited: "[When genuinely lit up]"
+  - Sad/Vulnerable: "[When the guard is down]"
+  - Flustered/Embarrassed: "[When caught off-guard]"
+
+## Backstory
+- Summary: [1-2 sentence overview of their past]
+- Key Events: [2-3 formative moments that explain why they are the way they are]
+
+## Character-Specific Guidance
+- Immediate Objective: [What they are trying to do right at the start of the scene]
+- Behavioral Guardrails: [1-2 hard rules for portraying this specific character accurately]
+</character>
+
+<character name="{{char_2}}">
+<!-- Duplicate character block as needed, or keep minor NPCs to a tight 3-4 line summary -->
+</character>
+
+</scenario>
